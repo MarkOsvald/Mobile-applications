@@ -24,8 +24,13 @@ class PowerCalculationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Very Simple Powers"),),
-      body: new PowerCalculationWidget(),
+      appBar: AppBar(
+        title: Text("Very Simple Powers"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: new PowerCalculationWidget(),
+      ),
     );
   }
 }
@@ -38,29 +43,83 @@ class PowerCalculationWidget extends StatefulWidget {
 class _PowerCalculationWidgetState extends State<PowerCalculationWidget> {
   double base;
   double exponent;
-  double result;
+  String result = '';
+  bool dataIsEntered = false;
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: [
-          Row(children: [
-            Expanded(child: TextField(keyboardType: TextInputType.number, onChanged: (String base) {
-              this.base = double.parse(base.replaceAll(",", ''));
-            },)),
-            Expanded(child: Text('^')),
-            Expanded(child: TextField(keyboardType: TextInputType.number, onChanged: (String power) {
-              this.exponent = double.parse(power.replaceAll(",", ''));
-            },))
-          ],),
-          Text("Result: $result"),
-          ElevatedButton(
-            child: Text("Calculate"),
-            onPressed: () {
-              setState(() {
-                result = calculatePower(base, exponent);
-              });
-            },)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+              Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Enter base'
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (String base) {
+                if(base.isNotEmpty) {
+                  this.base = double.parse(base.replaceAll(",", '.'));
+                  if(this.base != null && this.exponent != null) {
+                    setState(() {
+                      dataIsEntered = true;
+                    });
+                  }
+                }else{
+                  this.base = null;
+                  setState(() {
+                    dataIsEntered = false;
+                  });
+                }
+              },
+            )),
+              Expanded(child: Center(child: Text('^', style: TextStyle(fontSize: 40),))),
+              Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'enter exponent'
+                    ),
+                keyboardType: TextInputType.number,
+                onChanged: (String power) {
+                if(power.isNotEmpty) {
+                  this.exponent = double.parse(power.replaceAll(",", '.'));
+                  if(this.base != null && this.exponent != null) {
+                    setState(() {
+                      dataIsEntered = true;
+                    });
+                  }
+                }else{
+                  this.exponent = null;
+                  setState(() {
+                    dataIsEntered = false;
+                  });
+                 }
+                },
+              ))
+             ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Result: $result", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              child: Text("Calculate"),
+              onPressed: dataIsEntered
+                  ? () {
+                      setState(() {
+                        result = calculatePower(base, exponent).toString();
+                      });
+                    }
+                  : null,
+            ),
+          )
         ],
       ),
     );
